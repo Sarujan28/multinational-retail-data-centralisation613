@@ -1,5 +1,6 @@
 import yaml
 from sqlalchemy import create_engine
+from sqlalchemy import inspect
 
 class DatabaseConnecter:
     def read_db_creds(self):
@@ -20,3 +21,9 @@ class DatabaseConnecter:
         RDS_PORT = self.credentials['RDS_PORT']
         engine = create_engine(f'{DATABASE_TYPE}+{DBAPI}://{RDS_USER}:{RDS_PASSWORD}@{RDS_HOST}:{RDS_PORT}/{RDS_DATABASE}')
         self.engine = engine
+
+    def list_db_tables(self):
+        inspector = inspect(self.engine)
+        table_names = inspector.get_table_names()
+        self.table_names = table_names
+        print(table_names)
