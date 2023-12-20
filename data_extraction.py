@@ -25,3 +25,18 @@ class DataExtractor:
         response = requests.get(endpoint, headers = headers)
         number_of_stores = response.json()
         print(number_of_stores)
+
+    def retrive_stores_data(self, retrive_endpoint, headers):
+        store_number = 0
+        list_of_store_data = []
+        self.retrive_endpoint = retrive_endpoint
+        self.headers = headers
+        while store_number in range(0,451):
+            response = requests.get(retrive_endpoint + f'{store_number}', headers = headers)
+            store_data = response.json()
+            list_of_store_data.append(store_data)
+            store_number += 1
+        stores_data = pd.DataFrame(list_of_store_data)
+        stores_data.set_index('index', inplace= True)
+        self.stores_data = stores_data
+        print(stores_data)
