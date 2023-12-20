@@ -3,6 +3,7 @@ import pandas as pd
 import tabula
 from tabula.io import read_pdf
 import requests
+import boto3
 
 class DataExtractor:
     def read_rds_table(self, table_name, database_connection):
@@ -40,3 +41,31 @@ class DataExtractor:
         stores_data.set_index('index', inplace= True)
         self.stores_data = stores_data
         print(stores_data)
+
+    def extract_from_s3(self, address):
+        self.address = address
+        bucket_name = ''
+        object_key = ''
+        if 'https' in address:
+            components = address.split('/')
+            region = components[2]
+            region_components = region.split('.')
+            bucket_name = region_components[0]
+            object_key = components[3]
+        else:
+            components = address.split('/')
+            bucket_name = components[2]
+            object_key = components[3]
+        print(bucket_name)
+        print(object_key)
+        s3 = boto3.client('s3')
+        s3.download_file(bucket_name, object_key, f'/Users/saruj/Downloads/multinational-retail-data-centralisation613/{object_key}')
+        dataframe = pd.DataFrame([])
+        if '.csv' in object_key:
+            dataframe = pd.read_csv(f'/Users/saruj/Downloads/multinational-retail-data-centralisation613/{object_key}', index_col = 0)
+        elif '.json' in object_key:
+            dataframe = pd.read_json(f'/Users/saruj/Downloads/multinational-retail-data-centralisation613/{object_key}')
+        self.dataframe = dataframe
+        dataframe.info()
+        print(dataframe)
+        return dataframe
