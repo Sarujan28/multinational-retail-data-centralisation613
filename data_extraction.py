@@ -2,6 +2,7 @@ from database_utils import DatabaseConnecter
 import pandas as pd
 import tabula
 from tabula.io import read_pdf
+import requests
 
 class DataExtractor:
     def read_rds_table(self, table_name, database_connection):
@@ -19,3 +20,8 @@ class DataExtractor:
         self.dataframe = dataframe
         print(dataframe)
         return dataframe
+
+    def list_number_of_stores(self, endpoint, headers):
+        response = requests.get(endpoint, headers = headers)
+        number_of_stores = response.json()
+        print(number_of_stores)
