@@ -2,6 +2,7 @@ from data_extraction import DataExtractor
 import pandas as pd
 import numpy as np
 from dateutil.parser import parse
+import re
 
 class DataCleaning:
     def clean_user_data(self, table_name, dataframe):
@@ -133,4 +134,46 @@ class DataCleaning:
 
         clean_table['staff_numbers'] = clean_table['staff_numbers'].str.replace(r'\D', '', regex = True)
 
+        return clean_table
+
+    def convert_product_weight(self, convert_dataframe):
+        self.convert_dataframe = convert_dataframe
+        clean_table = convert_dataframe
+        clean_table.info()
+        clean_table.isna()
+
+        clean_table['weight'] = clean_table['weight'].astype(str).str.replace(r'.$', '', regex = True)
+
+        def convert(weight):
+            if 'x' in weight:
+                weight = float(re.findall('\d+', weight)[0]) * float(re.findall('\d+', weight)[1])
+                weight = weight/1000
+                return weight
+            elif 'kg' in weight:
+                weight = weight.replace('g','')
+                weight = weight.replace('k','')
+                return float(weight)
+            elif 'g' in weight:
+                weight = weight.replace('g','')
+                weight = float(weight)
+                weight = weight/1000
+                return weight
+            elif 'ml' in weight:
+                weight = weight.replace('l','')
+                weight = weight.replace('m','')
+                weight = float(weight)
+                weight = weight/1000
+                return weight
+            elif 'oz' in weight:
+                weight = weight.replace('z','')
+                weight = weight.replace('o','')
+                weight = float(weight)
+                weight = weight/35.274
+                return weight
+            else:
+                return weight
+        
+        clean_table['weight'] = clean_table['weight'].astype(str).apply(convert)
+
+        print(clean_table)
         return clean_table
