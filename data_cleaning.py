@@ -242,3 +242,29 @@ class DataCleaning:
         clean_table.drop(columns = ['1'], inplace = True)
 
         return clean_table
+    
+    def clean_date_times(self, extract):
+        clean_dataframe = DataExtractor()
+        self.clean_dataframe = clean_dataframe
+        self.extract = extract
+        clean_table = extract
+        clean_table.info()
+        clean_table.isna()
+
+        regex_expression_2 = '^[A-Z0-9]{10}$'
+        clean_table['timestamp'] = clean_table['timestamp'].replace(regex_expression_2, np.nan, regex = True)
+        clean_table['month'] = clean_table['month'].replace(regex_expression_2, np.nan, regex = True)
+        clean_table['year'] = clean_table['year'].replace(regex_expression_2, np.nan, regex = True)
+        clean_table['day'] = clean_table['day'].replace(regex_expression_2, np.nan, regex = True)
+        clean_table['time_period'] = clean_table['time_period'].replace(regex_expression_2, np.nan, regex = True)
+        clean_table['date_uuid'] = clean_table['date_uuid'].replace(regex_expression_2, np.nan, regex = True)
+
+        clean_table['timestamp'] = clean_table['timestamp'].replace('NULL', np.nan, regex = True)
+        clean_table['month'] = clean_table['month'].replace('NULL', np.nan, regex = True)
+        clean_table['year'] = clean_table['year'].replace('NULL', np.nan, regex = True)
+        clean_table['day'] = clean_table['day'].replace('NULL', np.nan, regex = True)
+        clean_table['time_period'] = clean_table['time_period'].replace('NULL', np.nan, regex = True)
+        clean_table['date_uuid'] = clean_table['date_uuid'].replace('NULL', np.nan, regex = True)
+        clean_table = clean_table.dropna(axis = 0, how = 'all')
+        
+        return clean_table
