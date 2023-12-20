@@ -83,3 +83,54 @@ class DataCleaning:
 
         print(clean_table)
         return clean_table
+    
+    def called_clean_store_data(self, retrive_endpoint, headers):
+        retrive_stores = DataExtractor()
+        self.retrive_endpoint = retrive_endpoint
+        self.headers = headers
+        retrive_stores.retrive_stores_data(retrive_endpoint, headers)
+        clean_table = retrive_stores.stores_data
+        self.clean_table = clean_table
+        clean_table.info()
+        clean_table.isna()
+
+        clean_table.drop(columns = ['lat'], inplace = True)
+
+        regex_expression_2 = '^[A-Z0-9]{10}$'
+        clean_table['address'] = clean_table['address'].replace(regex_expression_2, np.nan, regex = True)
+        clean_table['longitude'] = clean_table['longitude'].replace(regex_expression_2, np.nan, regex = True)
+        clean_table['locality'] = clean_table['locality'].replace(regex_expression_2, np.nan, regex = True)
+        clean_table['store_code'] = clean_table['store_code'].replace(regex_expression_2, np.nan, regex = True)
+        clean_table['staff_numbers'] = clean_table['staff_numbers'].replace(regex_expression_2, np.nan, regex = True)
+        clean_table['opening_date'] = clean_table['opening_date'].replace(regex_expression_2, np.nan, regex = True)
+        clean_table['store_type'] = clean_table['store_type'].replace(regex_expression_2, np.nan, regex = True)
+        clean_table['latitude'] = clean_table['latitude'].replace(regex_expression_2, np.nan, regex = True)
+        clean_table['country_code'] = clean_table['country_code'].replace(regex_expression_2, np.nan, regex = True)
+        clean_table['continent'] = clean_table['continent'].replace(regex_expression_2, np.nan, regex = True)
+       
+        clean_table['address'] = clean_table['address'].replace('N/A', np.nan, regex = True)
+        clean_table['longitude'] = clean_table['longitude'].replace('N/A', np.nan, regex = True)
+        clean_table['locality'] = clean_table['locality'].replace('N/A', np.nan, regex = True)
+
+        clean_table['address'] = clean_table['address'].replace('NULL', np.nan, regex = True)
+        clean_table['longitude'] = clean_table['longitude'].replace('NULL', np.nan, regex = True)
+        clean_table['locality'] = clean_table['locality'].replace('NULL', np.nan, regex = True)
+        clean_table['store_code'] = clean_table['store_code'].replace('NULL', np.nan, regex = True)
+        clean_table['staff_numbers'] = clean_table['staff_numbers'].replace('NULL', np.nan, regex = True)
+        clean_table['opening_date'] = clean_table['opening_date'].replace('NULL', np.nan, regex = True)
+        clean_table['store_type'] = clean_table['store_type'].replace('NULL', np.nan, regex = True)
+        clean_table['latitude'] = clean_table['latitude'].replace('NULL', np.nan, regex = True)
+        clean_table['country_code'] = clean_table['country_code'].replace('NULL', np.nan, regex = True)
+        clean_table['continent'] = clean_table['continent'].replace('NULL', np.nan, regex = True)
+        clean_table = clean_table.dropna(axis = 0, how = 'all')
+
+        clean_table['opening_date'] = clean_table['opening_date'].replace(np.nan, '1800-01-01', regex = True)
+        clean_table['opening_date'] = clean_table['opening_date'].apply(parse)
+        clean_table['opening_date'] = pd.to_datetime(clean_table['opening_date'], infer_datetime_format=True, errors='coerce')
+        clean_table.loc[clean_table['opening_date'] == '1800-01-01 00:00:00', 'opening_date'] = pd.NaT
+
+        clean_table['continent'] = clean_table['continent'].str.replace('ee', '', regex = True)
+
+        clean_table['staff_numbers'] = clean_table['staff_numbers'].str.replace(r'\D', '', regex = True)
+
+        return clean_table
