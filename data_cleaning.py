@@ -57,3 +57,29 @@ class DataCleaning:
         clean_table = clean_table.dropna(axis = 0, how = 'all')
 
         return clean_table
+
+    def clean_card_details(self, dataframe):
+        self.extract = dataframe
+        clean_table = dataframe
+        clean_table.info()
+        clean_table.isna()
+
+        regex_expression_2 = '^[A-Z0-9]{10}$'
+        clean_table['card_number'] = clean_table['card_number'].replace(regex_expression_2, np.nan, regex = True)
+        clean_table['expiry_date'] = clean_table['expiry_date'].replace(regex_expression_2, np.nan, regex = True)
+        clean_table['card_provider'] = clean_table['card_provider'].replace(regex_expression_2, np.nan, regex = True)
+        clean_table['date_payment_confirmed'] = clean_table['date_payment_confirmed'].replace(regex_expression_2, np.nan, regex = True)
+
+        clean_table['card_number'] = clean_table['card_number'].replace('NULL', np.nan, regex = True)
+        clean_table['expiry_date'] = clean_table['expiry_date'].replace('NULL', np.nan, regex = True)
+        clean_table['card_provider'] = clean_table['card_provider'].replace('NULL', np.nan, regex = True)
+        clean_table['date_payment_confirmed'] = clean_table['date_payment_confirmed'].replace('NULL', np.nan, regex = True)
+        clean_table = clean_table.dropna(axis = 0, how = 'all')
+      
+        clean_table['date_payment_confirmed'] = clean_table['date_payment_confirmed'].apply(parse)
+        clean_table['date_payment_confirmed'] = pd.to_datetime(clean_table['date_payment_confirmed'], infer_datetime_format=True, errors='coerce')
+
+        clean_table['card_number'] = clean_table['card_number'].astype(str).str.replace(r'\D+','', regex = True)
+
+        print(clean_table)
+        return clean_table
