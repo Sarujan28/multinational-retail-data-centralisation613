@@ -35,7 +35,6 @@ class DatabaseConnecter:
         self.clean_dataframe = clean_dataframe
         table_upload = clean_dataframe
         self.table_upload = table_upload
-        table_upload.to_csv('final_user.csv')
         DATABASE_TYPE = 'postgresql'
         DBAPI = 'psycopg2'
         HOST = 'localhost'
