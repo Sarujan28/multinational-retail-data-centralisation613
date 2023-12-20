@@ -220,3 +220,25 @@ class DataCleaning:
         print(clean_table)
 
         return clean_table
+    
+    def clean_orders_data(self, table_name, dataframe):
+        dataframe = DataExtractor()
+        self.dataframe = dataframe
+        self.table_name = table_name
+        dataframe.read_rds_table(table_name, dataframe)
+        clean_table = dataframe.table
+        self.clean_table = clean_table
+        clean_table.info()
+        clean_table.isna()
+
+        clean_table.set_index('index', inplace= True)
+
+        clean_table.drop(columns = ['level_0'], inplace = True)
+
+        clean_table.drop(columns = ['first_name'], inplace = True)
+
+        clean_table.drop(columns = ['last_name'], inplace = True)
+
+        clean_table.drop(columns = ['1'], inplace = True)
+
+        return clean_table
