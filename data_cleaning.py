@@ -177,3 +177,46 @@ class DataCleaning:
 
         print(clean_table)
         return clean_table
+    
+    def clean_products_data(self, clean_dataframe):
+        self.clean_dataframe = clean_dataframe
+        clean_table = clean_dataframe
+        clean_table.info()
+        clean_table.isna()
+
+        clean_table['weight'] = clean_table['weight'].astype(str).replace('na', np.nan, regex = True)
+
+        clean_table['weight'] = clean_table['weight'].astype(str).str.replace('k','', regex = True)
+
+        clean_table['weight'] = clean_table['weight'].astype(str).str.replace('m','', regex = True)
+
+        clean_table['weight'] = clean_table['weight'].astype(str).str.replace('o','', regex = True)
+
+        regex_expression_2 = '^[A-Z0-9]{9,10}$'
+        clean_table['product_name'] = clean_table['product_name'].replace(regex_expression_2, np.nan, regex = True)
+        clean_table['product_price'] = clean_table['product_price'].replace(regex_expression_2, np.nan, regex = True)
+        clean_table['weight'] = clean_table['weight'].replace(regex_expression_2, np.nan, regex = True)
+        clean_table['category'] = clean_table['category'].replace(regex_expression_2, np.nan, regex = True)
+        clean_table['EAN'] = clean_table['EAN'].replace('^[A-Z0-9]{9,11}$', np.nan, regex = True)
+        clean_table['date_added'] = clean_table['date_added'].replace(regex_expression_2, np.nan, regex = True)
+        clean_table['uuid'] = clean_table['uuid'].replace(regex_expression_2, np.nan, regex = True)
+        clean_table['removed'] = clean_table['removed'].replace(regex_expression_2, np.nan, regex = True)
+        clean_table['product_code'] = clean_table['product_code'].replace(regex_expression_2, np.nan, regex = True)
+
+        clean_table['product_name'] = clean_table['product_name'].replace('NULL', np.nan, regex = True)
+        clean_table['product_price'] = clean_table['product_price'].replace('NULL', np.nan, regex = True)
+        clean_table['weight'] = clean_table['weight'].replace('NULL', np.nan, regex = True)
+        clean_table['category'] = clean_table['category'].replace('NULL', np.nan, regex = True)
+        clean_table['EAN'] = clean_table['EAN'].replace('NULL', np.nan, regex = True)
+        clean_table['date_added'] = clean_table['date_added'].replace('NULL', np.nan, regex = True)
+        clean_table['uuid'] = clean_table['uuid'].replace('NULL', np.nan, regex = True)
+        clean_table['removed'] = clean_table['removed'].replace('NULL', np.nan, regex = True)
+        clean_table['product_code'] = clean_table['product_code'].replace('NULL', np.nan, regex = True)
+        clean_table = clean_table.dropna(axis = 0, how = 'all')
+        clean_table = clean_table[clean_table['product_code'].notna()]
+
+        clean_table['weight'] = clean_table['weight'].astype(float)
+
+        print(clean_table)
+
+        return clean_table
