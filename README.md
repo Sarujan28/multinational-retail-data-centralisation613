@@ -326,7 +326,7 @@ The total amount of sales for each store type from Germany the total sales colum
 
 ## File structure of project
 
-![file_structure_of_project](file_structure.png)
+![file_structure_of_project](file_structure.PNG)
 
 ## License Information
 
